@@ -651,7 +651,7 @@ func (c *Client) handleSendPostMessage(details *sendPostDetails) {
 	}
 
 	// Read the raw bytes and close the response.
-	respBytes, err := btcjson.GetRaw(httpResponse.Body)
+	respBytes, err := btcjson.GetRaw(httpResponse)
 	if err != nil {
 		details.responseChan <- &response{err: err}
 		return
