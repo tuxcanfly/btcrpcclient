@@ -1824,9 +1824,9 @@ func (r FutureListReceivedByAccountResult) Receive() ([]btcjson.ListReceivedByAc
 // function on the returned instance.
 //
 // See ListReceivedByAccount for the blocking version and more details.
-func (c *Client) ListReceivedByAccountAsync() FutureListReceivedByAccountResult {
+func (c *Client) ListReceivedByAccountAsync(account string) FutureListReceivedByAccountResult {
 	id := c.NextID()
-	cmd, err := btcjson.NewListReceivedByAccountCmd(id)
+	cmd, err := btcjson.NewListReceivedByAccountCmd(id, account)
 	if err != nil {
 		return newFutureError(err)
 	}
@@ -1841,8 +1841,8 @@ func (c *Client) ListReceivedByAccountAsync() FutureListReceivedByAccountResult 
 // See ListReceivedByAccountMinConf to override the minimum number of
 // confirmations and ListReceivedByAccountIncludeEmpty to filter accounts that
 // haven't received any payments from the results.
-func (c *Client) ListReceivedByAccount() ([]btcjson.ListReceivedByAccountResult, error) {
-	return c.ListReceivedByAccountAsync().Receive()
+func (c *Client) ListReceivedByAccount(account string) ([]btcjson.ListReceivedByAccountResult, error) {
+	return c.ListReceivedByAccountAsync(account).Receive()
 }
 
 // ListReceivedByAccountMinConfAsync returns an instance of a type that can be
@@ -1850,9 +1850,9 @@ func (c *Client) ListReceivedByAccount() ([]btcjson.ListReceivedByAccountResult,
 // function on the returned instance.
 //
 // See ListReceivedByAccountMinConf for the blocking version and more details.
-func (c *Client) ListReceivedByAccountMinConfAsync(minConfirms int) FutureListReceivedByAccountResult {
+func (c *Client) ListReceivedByAccountMinConfAsync(account string, minConfirms int) FutureListReceivedByAccountResult {
 	id := c.NextID()
-	cmd, err := btcjson.NewListReceivedByAccountCmd(id, minConfirms)
+	cmd, err := btcjson.NewListReceivedByAccountCmd(id, account, minConfirms)
 	if err != nil {
 		return newFutureError(err)
 	}
@@ -1867,8 +1867,8 @@ func (c *Client) ListReceivedByAccountMinConfAsync(minConfirms int) FutureListRe
 // See ListReceivedByAccount to use the default minimum number of confirmations
 // and ListReceivedByAccountIncludeEmpty to also filter accounts that haven't
 // received any payments from the results.
-func (c *Client) ListReceivedByAccountMinConf(minConfirms int) ([]btcjson.ListReceivedByAccountResult, error) {
-	return c.ListReceivedByAccountMinConfAsync(minConfirms).Receive()
+func (c *Client) ListReceivedByAccountMinConf(account string, minConfirms int) ([]btcjson.ListReceivedByAccountResult, error) {
+	return c.ListReceivedByAccountMinConfAsync(account, minConfirms).Receive()
 }
 
 // ListReceivedByAccountIncludeEmptyAsync returns an instance of a type that can
@@ -1876,9 +1876,9 @@ func (c *Client) ListReceivedByAccountMinConf(minConfirms int) ([]btcjson.ListRe
 // Receive function on the returned instance.
 //
 // See ListReceivedByAccountIncludeEmpt for the blocking version and more details.
-func (c *Client) ListReceivedByAccountIncludeEmptyAsync(minConfirms int, includeEmpty bool) FutureListReceivedByAccountResult {
+func (c *Client) ListReceivedByAccountIncludeEmptyAsync(account string, minConfirms int, includeEmpty bool) FutureListReceivedByAccountResult {
 	id := c.NextID()
-	cmd, err := btcjson.NewListReceivedByAccountCmd(id, minConfirms, includeEmpty)
+	cmd, err := btcjson.NewListReceivedByAccountCmd(id, account, minConfirms, includeEmpty)
 	if err != nil {
 		return newFutureError(err)
 	}
@@ -1891,8 +1891,8 @@ func (c *Client) ListReceivedByAccountIncludeEmptyAsync(minConfirms int, include
 // haven't received any payments depending on specified flag.
 //
 // See ListReceivedByAccount and ListReceivedByAccountMinConf to use defaults.
-func (c *Client) ListReceivedByAccountIncludeEmpty(minConfirms int, includeEmpty bool) ([]btcjson.ListReceivedByAccountResult, error) {
-	return c.ListReceivedByAccountIncludeEmptyAsync(minConfirms,
+func (c *Client) ListReceivedByAccountIncludeEmpty(account string, minConfirms int, includeEmpty bool) ([]btcjson.ListReceivedByAccountResult, error) {
+	return c.ListReceivedByAccountIncludeEmptyAsync(account, minConfirms,
 		includeEmpty).Receive()
 }
 
