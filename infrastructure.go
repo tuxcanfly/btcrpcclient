@@ -788,7 +788,7 @@ func (c *Client) sendRequest(jReq *jsonRequest) {
 	// the client running in HTTP POST mode or not.  When running in HTTP
 	// POST mode, the command is issued via an HTTP client.  Otherwise,
 	// the command is issued via the asynchronous websocket channels.
-	if c.config.HttpPostMode {
+	if c.config.HTTPPostMode {
 		c.sendPost(jReq)
 		return
 	}
@@ -869,7 +869,7 @@ func (c *Client) Disconnected() bool {
 //
 // This function is safe for concurrent access.
 func (c *Client) doDisconnect() bool {
-	if c.config.HttpPostMode {
+	if c.config.HTTPPostMode {
 		return false
 	}
 
@@ -972,7 +972,7 @@ func (c *Client) start() {
 
 	// Start the I/O processing handlers depending on whether the client is
 	// in HTTP POST mode or the default websocket mode.
-	if c.config.HttpPostMode {
+	if c.config.HTTPPostMode {
 		c.wg.Add(1)
 		go c.sendPostHandler()
 	} else {
@@ -1048,13 +1048,13 @@ type ConnConfig struct {
 	// called manually.
 	DisableConnectOnNew bool
 
-	// HttpPostMode instructs the client to run using multiple independent
+	// HTTPPostMode instructs the client to run using multiple independent
 	// connections issuing HTTP POST requests instead of using the default
 	// of websockets.  Websockets are generally preferred as some of the
 	// features of the client such notifications only work with websockets,
 	// however, not all servers support the websocket extensions, so this
 	// flag can be set to true to use basic HTTP POST requests instead.
-	HttpPostMode bool
+	HTTPPostMode bool
 
 	// EnableBCInfoHacks is an option provided to enable compatiblity hacks
 	// when connecting to blockchain.info RPC server
@@ -1175,7 +1175,7 @@ func New(config *ConnConfig, ntfnHandlers *NotificationHandlers) (*Client, error
 	var httpClient *http.Client
 	connEstablished := make(chan struct{})
 	var start bool
-	if config.HttpPostMode {
+	if config.HTTPPostMode {
 		ntfnHandlers = nil
 		start = true
 
@@ -1215,7 +1215,7 @@ func New(config *ConnConfig, ntfnHandlers *NotificationHandlers) (*Client, error
 	if start {
 		close(connEstablished)
 		client.start()
-		if !client.config.HttpPostMode && !client.config.DisableAutoReconnect {
+		if !client.config.HTTPPostMode && !client.config.DisableAutoReconnect {
 			client.wg.Add(1)
 			go client.wsReconnectHandler()
 		}
@@ -1239,7 +1239,7 @@ func (c *Client) Connect(tries int) error {
 	c.mtx.Lock()
 	defer c.mtx.Unlock()
 
-	if c.config.HttpPostMode {
+	if c.config.HTTPPostMode {
 		return ErrNotWebsocketClient
 	}
 	if c.wsConn != nil {
