@@ -819,6 +819,12 @@ func (c *Client) sendRequest(jReq *jsonRequest) {
 // future.  It handles both websocket and HTTP POST mode depending on the
 // configuration of the client.
 func (c *Client) sendCmd(cmd interface{}) chan *response {
+	// Get the method associated with the command.
+	method, err := btcjson.CmdMethod(cmd)
+	if err != nil {
+		return newFutureError(err)
+	}
+
 	// Marshal the command.
 	id := c.NextID()
 	marshalledJSON, err := btcjson.MarshalCmd(id, cmd)
@@ -830,7 +836,7 @@ func (c *Client) sendCmd(cmd interface{}) chan *response {
 	responseChan := make(chan *response, 1)
 	jReq := &jsonRequest{
 		id:             id,
-		method:         fmt.Sprintf("%T", cmd), // TODO(davec): Method
+		method:         method,
 		cmd:            cmd,
 		marshalledJSON: marshalledJSON,
 		responseChan:   responseChan,
